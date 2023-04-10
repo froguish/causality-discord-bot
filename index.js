@@ -80,7 +80,7 @@ client.on("messageCreate", async (message) => {
     let journey
 
     for (let journeys of players){
-        if (journeys[4] == message.channel.id)
+        if (journeys[3] == message.channel.id)
             journey = journeys
     }
 

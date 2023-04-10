@@ -92,7 +92,7 @@ module.exports = {
 			max_tokens: 800,
 		})
 
-		players.push([interaction.user.id, playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);
+		players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);
 
 		channel.send(result.data.choices[0].message)
 		channel.send(`${interaction.user}`)

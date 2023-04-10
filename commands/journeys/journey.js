@@ -45,8 +45,6 @@ module.exports = {
 		}
 		*/
 
-		await players.push(interaction.user.id)
-
 		await interaction.reply(`Journey started!`);
 		const channel = await interaction.guild.channels.create({
 			name: "Journey",
@@ -54,16 +52,18 @@ module.exports = {
 			parent: "1094756148315443270"
 		});
 
-		channel.send(`${interaction.user} Journey generating...`)
+		channel.sendTyping()
 
-		playerInfo = [character, goal, setting]
+		// channel.send(`${interaction.user} Journey generating...`);
+
+		playerInfo = [character, goal, setting, channel.id]
 		var context = [
 			`Generate a random short detailed sentence about a named character described as YOU.`,
 			`Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
 			`Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
 		]
 
-		for (let i = 0; i < playerInfo.length; i ++){
+		for (let i = 0; i < playerInfo.length; i++){
 			if (playerInfo[i] == null){
 				let missing = [{role: 'system', content: context[i]}]
 
@@ -92,8 +92,11 @@ module.exports = {
 			max_tokens: 800,
 		})
 
+		players.push([interaction.user.id, playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);
+
 		channel.send(result.data.choices[0].message)
+		channel.send(`${interaction.user}`)
 	},
 	queue,
-	playerInfo
+	players,
 };

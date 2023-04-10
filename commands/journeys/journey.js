@@ -89,7 +89,7 @@ module.exports = {
 		const result = await openai.createChatCompletion({
 			model: 'gpt-3.5-turbo',
 			messages: conversationLog,
-			max_tokens: 800,
+			max_tokens: 400,
 		})
 
 		players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);

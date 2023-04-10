@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 var queue = []
+var players = []
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -23,13 +24,20 @@ module.exports = {
 
 		if (categorySize > 4) {
 			interaction.reply("Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.")
-			queue[queue.length] = [`${interaction.user}`, character, goal, setting]
+			queue.push([`${interaction.user}`, character, goal, setting])
 			return
 		}
 
+		if (await players.includes(interaction.user.id)) {
+			interaction.reply("Sorry! Users may only have 1 journey at a time.")
+			return
+		}
+
+		await players.push(interaction.user.id)
+
 		await interaction.reply(`${character} is going on a journey to ${goal} in ${setting}!`);
 		const channel = await interaction.guild.channels.create({
-			name: "test1",
+			name: "Journey",
 			type: 0,
 			parent: "1094756148315443270"
 		});

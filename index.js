@@ -66,7 +66,12 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+var myModule = require("./commands/journeys/journey.js")
+var queue = myModule.queue
+
 client.on("messageCreate", async (message) => {
+    console.log(queue)
+    if (message.channel.parent.id != "1094756148315443270") return
     if (message.content.includes("CASUALITY HAS ENDED YOUR JOURNEY")) console.log("Journey has ended.")
     if (message.content.includes("THOU HAS BESTED CASUALITY")) console.log("Journey has been completed.")
     if (message.author.bot) return

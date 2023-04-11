@@ -72,8 +72,12 @@ var queue = myModule.queue
 var players = myModule.players
 var playerIDS = myModule.playerIDS
 
+var finished = false
+
 client.on("messageCreate", async (message) => {
     if (message.channel.parent.id != "1094756148315443270") return
+
+    if (finished) return
 
     let journey = ["", "", "", ""]
 
@@ -85,11 +89,13 @@ client.on("messageCreate", async (message) => {
     if (message.content.toUpperCase().includes("CAUSALITY HAS ENDED YOUR JOURNEY") && message.author.bot) {
         console.log("Journey has ended.")
         deleteJourney(message, journey);
+        finished = true
         return
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
         console.log("Journey has been completed.")
         deleteJourney(message, journey);
+        finished = true
         return
     }
 

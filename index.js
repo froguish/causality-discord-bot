@@ -72,12 +72,8 @@ var queue = myModule.queue
 var players = myModule.players
 var playerIDS = myModule.playerIDS
 
-var finished = false
-
 client.on("messageCreate", async (message) => {
     if (message.channel.parent.id != "1094756148315443270") return
-
-    if (finished) return
 
     let journey = ["", "", "", ""]
 
@@ -109,6 +105,9 @@ client.on("messageCreate", async (message) => {
 
         let timer = setTimeout(async () => {
             try {
+
+                // deleteJourney
+
                 players.shift()
                 playerIDS.shift()
                 await message.channel.delete()

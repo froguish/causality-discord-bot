@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
+const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const { Configuration, OpenAIApi } = require("openai")
 require('dotenv/config')
 
@@ -42,6 +42,19 @@ client.login(process.env.DISCORD_TOKEN);
 
 client.on('ready', (clientUser) => {
     console.log(`Logged in as ${clientUser.user.tag}`)
+    clientUser.guilds.cache.forEach((guild) => {
+        //journeys category
+        guild.channels.cache.get("1094756148315443270").children.cache.forEach((channel) =>{
+            try {
+                //journey rules chat
+                if (channel.id != "1095472942013485107"){
+                    channel.delete()
+                }
+            } catch (e) { }
+        })
+    })
+
+
 })
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -73,6 +86,7 @@ var players = myModule.players
 var playerIDS = myModule.playerIDS
 
 client.on("messageCreate", async (message) => {
+
     if (message.channel.parent.id != "1094756148315443270") return
 
     let journey = ["", "", "", ""]
@@ -140,14 +154,54 @@ client.on("messageCreate", async (message) => {
         }
     })
 
-    const result = await openai.createChatCompletion({
+    let result = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
         messages: conversationLog,
         max_tokens: 400,
     })
 
+    const row = new ActionRowBuilder()
+			.addComponents(
+				new ButtonBuilder()
+					.setCustomId('condition')
+					.setLabel('Check status')
+					.setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                .setCustomId('end')
+                .setLabel('End')
+                .setStyle(ButtonStyle.Danger),
+			);
+    
+    const filter = i => i.customId === 'condition' || i.customId === 'end';
 
-    message.channel.send(result.data.choices[0].message)
+    const collector = message.channel.createMessageComponentCollector({ filter, time: 15000 });
+
+    collector.on('collect', async i => {
+        await i.deferUpdate();
+        if (i.customId === 'condition'){
+            await message.channel.sendTyping();
+            conversationLog.push({role: 'system', content: "What is the status of the journey? (DIRECTLY ANSWER THIS QUESTION)"})
+            let result = await openai.createChatCompletion({
+                model: 'gpt-3.5-turbo',
+                messages: conversationLog,
+                max_tokens: 400,
+            })
+
+            message.channel.send(result.data.choices[0].message.content)
+        }
+        if (i.customId === 'end'){
+            i.editReply({ components: []})
+            await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY**`)
+        }
+    });
+
+    message.channel.send({content: result.data.choices[0].message.content, components: [row]})
+    
+});
+
+client.on(Events.InteractionCreate, interaction => {
+	if (!interaction.isButton()) return;
+	
 });
 
 client.on("channelDelete", async (chnnl) => {

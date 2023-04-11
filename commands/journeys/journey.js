@@ -33,23 +33,23 @@ module.exports = {
 		let setting = interaction.options.getString('setting')
 
 		if (playerIDS.includes(interaction.user)) {
-			await interaction.reply("Sorry! Users may only have 1 journey at a time.")
+			await interaction.reply({content: "Sorry! Users may only have 1 journey at a time.", ephemeral: true})
 			return	
 		}
 
-		if (categorySize > 4) {
+		if (categorySize > 5) {
 			for (let pos of queue) {
 				if (pos[0] == interaction.user){
-					await interaction.reply("Sorry! Users may only have 1 journey in the queue at a time.")
+					await interaction.reply({content: "Sorry! Users may only have 1 journey in the queue at a time.", ephemeral: true})
 					return
 				}
 			}
-			interaction.reply("Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.")
+			interaction.reply({content: "Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.", ephemeral: true})
 			queue.push([interaction.user, character, goal, setting])
 			return
 		}
 
-		await interaction.reply(`Journey started!`);
+		await interaction.reply({ content: `Journey started!`, ephemeral: true});
 		
 		await createJourney(interaction, character, goal, setting, interaction.user);
 

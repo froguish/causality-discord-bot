@@ -85,13 +85,11 @@ client.on("messageCreate", async (message) => {
     if (message.content.toUpperCase().includes("CAUSALITY HAS ENDED YOUR JOURNEY") && message.author.bot) {
         console.log("Journey has ended.")
         deleteJourney(message, journey);
-        finished = true
         return
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
         console.log("Journey has been completed.")
         deleteJourney(message, journey);
-        finished = true
         return
     }
 
@@ -105,12 +103,7 @@ client.on("messageCreate", async (message) => {
 
         let timer = setTimeout(async () => {
             try {
-
-                // deleteJourney
-
-                players.shift()
-                playerIDS.shift()
-                await message.channel.delete()
+                deleteJourney(message, journey);
             } catch (e) {}
         }, 900000)
         
@@ -165,7 +158,8 @@ client.on("channelDelete", async (chnnl) => {
 })
 
 async function deleteJourney(ctx, position){
-    await new Promise(r => setTimeout(r, 60000));
+    await ctx.channel.permissionOverwrites.create(playerIDS[players.indexOf(position)].id, { SendMessages: false });
+    await new Promise(r => setTimeout(r, 120000));
     try {
         players[players.indexOf(position)][4]();
         players.splice(players.indexOf(position), 1)

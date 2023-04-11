@@ -71,6 +71,8 @@ async function createJourney(ctx, a, b, c, ping){
         parent: "1094756148315443270"
     });
 
+	channel.permissionOverwrites.create(channel.guild.roles.everyone, { SendMessages: false });
+
 	playerIDS.push(ping)
 	
 	channel.sendTyping()
@@ -115,6 +117,8 @@ async function createJourney(ctx, a, b, c, ping){
 
 	channel.send(result.data.choices[0].message)
 	channel.send(`${ping}`)
+
+	channel.permissionOverwrites.create(ping.id, { SendMessages: true });
 
 	let timer = setTimeout(async () => {
 		try {

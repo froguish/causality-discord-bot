@@ -4,6 +4,7 @@ require('dotenv/config')
 
 var queue = []
 var players = []
+var playerIDS = []
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_KEY,
@@ -31,19 +32,22 @@ module.exports = {
 		let goal = interaction.options.getString('goal')
 		let setting = interaction.options.getString('setting')
 
-		if (categorySize > 4) {
-			interaction.reply("Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.")
-			queue.push([interaction.user, character, goal, setting])
-			console.log(queue)
-			return
+		if (playerIDS.includes(interaction.user)) {
+			await interaction.reply("Sorry! Users may only have 1 journey at a time.")
+			return	
 		}
 
-		/*
-		if (await players.includes(interaction.user.id)) {
-			interaction.reply("Sorry! Users may only have 1 journey at a time.")
+		if (categorySize > 4) {
+			for (let pos of queue) {
+				if (pos[0] == interaction.user){
+					await interaction.reply("Sorry! Users may only have 1 journey in the queue at a time.")
+					return
+				}
+			}
+			interaction.reply("Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.")
+			queue.push([interaction.user, character, goal, setting])
 			return
 		}
-		*/
 
 		await interaction.reply(`Journey started!`);
 		
@@ -52,6 +56,7 @@ module.exports = {
 	},
 	queue,
 	players,
+	playerIDS,
 	createJourney,
 };
 
@@ -65,10 +70,12 @@ async function createJourney(ctx, a, b, c, ping){
         type: 0,
         parent: "1094756148315443270"
     });
+
+	playerIDS.push(ping)
 	
 	channel.sendTyping()
 
-	let playerInfo = [a, b, c, channel.id]
+	let playerInfo = [a, b, c, channel]
 	var context = [
 		`Generate a random short detailed sentence about a named character described as YOU. Include their appearance and personality.`,
 		`Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
@@ -111,17 +118,19 @@ async function createJourney(ctx, a, b, c, ping){
 
 	let timer = setTimeout(async () => {
 		try {
-			if (players[0] == [playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]){
-				players.shift()
-			}
+			players.shift()
+			playerIDS.shift()
 			await channel.delete()
 		} catch (e) {}
-	}, 900000)
+	}, 120000)
 
 	function cancel(){
 		clearTimeout(timer);
 	}
 
+	let notStarted = true
+
 	players[players.length - 1].push(cancel);
+	players[players.length - 1].push(notStarted);
 
 }

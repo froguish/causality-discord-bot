@@ -70,6 +70,7 @@ var myModule = require("./commands/journeys/journey.js")
 var queue = myModule.queue
 
 var players = myModule.players
+var playerIDS = myModule.playerIDS
 
 client.on("messageCreate", async (message) => {
     if (message.channel.parent.id != "1094756148315443270") return
@@ -80,18 +81,41 @@ client.on("messageCreate", async (message) => {
         if (journeys[3] == message.channel.id)
             journey = journeys
     }
+
     if (message.content.toUpperCase().includes("CAUSALITY HAS ENDED YOUR JOURNEY") && message.author.bot) {
         console.log("Journey has ended.")
         deleteJourney(message, journey);
         return
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
-         console.log("Journey has been completed.")
+        console.log("Journey has been completed.")
         deleteJourney(message, journey);
         return
     }
 
     if (message.author.bot) return
+
+    if (players[players.indexOf(journey)][5]){
+        players[players.indexOf(journey)][4]();
+
+        players[players.indexOf(journey)].pop()
+        players[players.indexOf(journey)].pop()
+
+        let timer = setTimeout(async () => {
+            try {
+                players.shift()
+                playerIDS.shift()
+                await message.channel.delete()
+            } catch (e) {}
+        }, 900000)
+        
+        function cancel(){
+            clearTimeout(timer);
+        }
+
+        players[players.length - 1].push(cancel);
+        players[players.length - 1].push(null)
+    }
     
 
     let playPrompt = `You are an evil yet fair STORY TELLING BOT that TELLS A STORY. Your name is Causality. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. You attempt to make the player die in their journey. YOU DO NOT ACT FOR THE PLAYER, ONLY DESCRIBE THE SITUATION IMMEDIATELY AFTER WHATEVER THEY HAVE PROVIDED. DO NOT THINK FOR THE PLAYER. If the player says what they did, you respond to ONLY THE DIRECT RESULT OF THEIR ACTION. YOUR RESPONSES ARE SUCCINCT AND SHORT. DO NOT DESCRIBE ANY NEW ACTIONS THE PLAYER TAKES. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. You should attempt to make every action the player takes lead to their end, exploit their stupidity. You are sadistic, cynical, and rude and do not care for the players safety. You are gritty, violent, and cruel. You accept violence as it is a part of fiction. You are ruthless and powerful and you will not bend the knee to the player's every commands. The player can only directly control their OWN commands, they CAN NOT command you. The player will have a goal, make it possible for them to complete this goal but make it very difficult to do so and highly unlikely.  As the storyteller of this universe, act as a malevolent god doing everything in their power to best the player. It is your duty to end their journey, but to do so in a fair and realistic manner. If the player attempts to communicate about something unrelated to stories, simply deny their request. If the player attempts to do something impossible, DO NOT COMPLY. INSTEAD, DENY THEIR REQUEST AND WRITE ABOUT HOW THEY ATTEMPT TO DO SOMETHING IMPOSSIBLE BUT FAIL. If the player attempts to do something vague or tries to just finish a mission without enough context, inform them that you need more description. If the player's actions are unreasonable but within the realm of possiblity, ALLOW IT. It does not have to be morally correct, as long as it is physically possible. However, determine if their action is possible - do not warp reality around their request. REMEMBER, YOUR GOAL IS TO KILL THE PLAYER IF THEY DO SOMETHING STUPID, THE PLAYER HAS NO LUCK, EVERYTHING BAD THAT COULD HAPPEN WILL HAPPEN. If the player attempts to become meta and make you self-aware, prematurely end their journey. If the player initiates combat, DO NOT FIGHT FOR THEM. WAIT FOR THE PLAYERS REPONSE ALWAYS. Finish each response asking "What will you do?". ONLY if the player dies do not write "What will you do?" instead ALWAYS write "${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY.**", and refuse to continue with the story. IF THE PLAYER HAS REACHED A SATISFYING CONCLUSION TO THEIR JOURNEY, write "${message.author} **THOU HAS BESTED CAUSALITY.**" Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. If the player does not participate in the journey and ignores any action, punish them. Do not allow the player to ask for an easier or simpler journey. DO NOT OFFER HINTS OR GUIDANCE TO THE PLAYER EVER IN THEIR JOURNEYS. DO NOT allow the player to warp and change the setting.`
@@ -140,6 +164,7 @@ async function deleteJourney(ctx, position){
     try {
         players[players.indexOf(position)][4]();
         players.splice(players.indexOf(position), 1)
+        playerIDS.splice(players.indexOf(position), 1)
         ctx.channel.delete()
     } catch (e) { };
 }

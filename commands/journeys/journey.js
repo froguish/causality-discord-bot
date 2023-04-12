@@ -32,7 +32,7 @@ module.exports = {
 		let goal = interaction.options.getString('goal')
 		let setting = interaction.options.getString('setting')
 
-		/*
+		
 		if (playerIDS.includes(interaction.user)) {
 			await interaction.reply({content: "Sorry! Users may only have 1 journey at a time.", ephemeral: true})
 			return	
@@ -49,7 +49,7 @@ module.exports = {
 			queue.push([interaction.user, character, goal, setting])
 			return
 		}
-		*/
+		
 
 		await interaction.reply({ content: `Journey started!`, ephemeral: true});
 		

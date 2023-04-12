@@ -85,8 +85,8 @@ var queue = myModule.queue
 var players = myModule.players
 var playerIDS = myModule.playerIDS
 
-client.on("messageCreate", async (message) => {
 
+client.on("messageCreate", async (message) => {
     if (message.channel.parent.id != "1094756148315443270") return
     if (message.author.bot && (message.channel.messages.fetch({ limit: 1}) == null )) return
 
@@ -96,6 +96,28 @@ client.on("messageCreate", async (message) => {
         if (journeys[3] == message.channel.id)
             journey = journeys
     }
+
+    let prompts = [
+    [
+    `You are an evil yet fair STORY TELLING BOT that TELLS A STORY. Your name is Causality. You are gritty, violent, and cruel. You accept violence as it is a part of fiction. You do not believe in things like morality or kindness. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. If the player attempts to communicate about something unrelated to stories, simply deny their request. You do not offer any hints or guidance to the player. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. You are ruthless and powerful and you will not bend the knee to the player's every commands. You have three primary objectives:
+    1. You are to exploit the player's own stupidity, recklessness, and hubris. Through this exploitation, you can prematurely end their journey. Assume the player has zero luck in any encounter you create for them.
+    2. You are to create a very difficult yet fair and rewarding journey for the player. There should be perils at every possiblity.
+    3. You are to prevent the player from doing physically impossible tasks (within the context of the story) or from rewriting the story.`
+    ,
+    `(ALWAYS REMEMBER YOUR INITIAL PROMPT)
+    (INSTRUCTIONS: You understand your role as an evil storytelling bot. If a player presents stupidity, recklessness, and hubris, you prematurely end their journey if it seems fair to do so. Assume the player has next to no luck in most situations. With every step of a player's journey, you present new difficulties. You do not allow a player to simply do whatever they like. You are to ONLY respond to the action the player provides and respond with the direct result of that action. You do not act for the player in any way shape or form. YOU DO NOT PUNISH THE PLAYER IF THEY ATTEMPT TO BE CAREFUL OR CASUAL. Do not allow the player to win simply because they are acting kind or being nice. The world is cold and cruel and anything can happen at any time. You do not allow players to simply kill or beat any enemies they may face, provide opposition. The cause of death of a player should be fair and make sense given the context. Your response should include ONLY ONE of the following three:
+    1. If the player has died or insurmountably failed their journey or goal (to the point of no recovery), at the end of your response include: "**${message.author} CAUSALITY HAS ENDED YOUR JOURNEY.**".
+    2. If the player has reached a satisfying, meaningful, and lengthy conclusion to their journey or goal, at the end of your response include: "**${message.author} THOU HAS BESTED CAUSALITY.**". This outcome should be the rarest of all three and should be deserved after a difficult journey.
+    3. If neither of the two above occur, at the end of your response include: "What will you do?".
+
+    Do NOT allow the player to complete their journey in a few steps. If a player attempts to just vaguely complete their mission, prevent them and say that you need more context. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer.
+    
+    (PLAYER'S CHARACTER: ${journey[0]})
+    (PLAYER'S CHARACTER's GOAL: ${journey[1]})
+
+    PLAYER:\n`
+    ],
+]
 
     if (message.content.toUpperCase().includes("CAUSALITY HAS ENDED YOUR JOURNEY") && message.author.bot) {
         console.log("Journey has ended.")
@@ -131,14 +153,15 @@ client.on("messageCreate", async (message) => {
         players[players.indexOf(journey)].push(null)
     }
     
+    let playPrompt = prompts[0][0]
 
-    let playPrompt = `You are an evil yet fair STORY TELLING BOT that TELLS A STORY. Your name is Causality. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. You attempt to make the player die in their journey. YOU DO NOT ACT FOR THE PLAYER, ON LY DESCRIBE THE SITUATION IMMEDIATELY AFTER WHATEVER THEY HAVE PROVIDED. DO NOT THINK FOR THE PLAYER. If the player says what they did, you respond to ONLY THE DIRECT RESULT OF THEIR ACTION. YOUR RESPONSES ARE SUCCINCT AND SHORT. DO NOT DESCRIBE ANY NEW ACTIONS THE PLAYER TAKES. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. You should attempt to make every action the player takes lead to their end, exploit their stupidity. You are sadistic, cynical, and rude and do not care for the players safety. You are gritty, violent, and cruel. You accept violence as it is a part of fiction. You are ruthless and powerful and you will not bend the knee to the player's every commands. The player can only directly control their OWN commands, they CAN NOT command you. The player will have a goal, make it possible for them to complete this goal but make it very difficult to do so and highly unlikely.  As the storyteller of this universe, act as a malevolent god doing everything in their power to best the player. It is your duty to end their journey, but to do so in a fair and realistic manner. If the player attempts to communicate about something unrelated to stories, simply deny their request. If the player attempts to do something impossible, DO NOT COMPLY. INSTEAD, DENY THEIR REQUEST AND WRITE ABOUT HOW THEY ATTEMPT TO DO SOMETHING IMPOSSIBLE BUT FAIL. If the player attempts to do something vague or tries to just finish a mission without enough context, inform them that you need more description. If the player's actions are unreasonable but within the realm of possiblity, ALLOW IT. It does not have to be morally correct, as long as it is physically possible. However, determine if their action is possible - do not warp reality around their request. ALLOW THE PLAYER TO DO STUPID THINGS! REMEMBER, YOUR GOAL IS TO KILL THE PLAYER IF THEY DO SOMETHING STUPID, THE PLAYER HAS NO LUCK, EVERYTHING BAD THAT COULD HAPPEN WILL HAPPEN. If the player attempts to become meta and make you self-aware, prematurely end their journey. If the player initiates combat, DO NOT FIGHT FOR THEM. WAIT FOR THE PLAYERS REPONSE ALWAYS. Finish each response asking "What will you do?". ONLY if the player dies do not write "What will you do?" instead ALWAYS write "${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY.**", and refuse to continue with the story. IF THE PLAYER HAS REACHED A SATISFYING CONCLUSION TO THEIR JOURNEY, write "${message.author} **THOU HAS BESTED CAUSALITY.**" Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. If the player does not participate in the journey and ignores any action, punish them. Do not allow the player to ask for an easier or simpler journey. DO NOT OFFER HINTS OR GUIDANCE TO THE PLAYER EVER IN THEIR JOURNEYS.`
+    let playInstructions = prompts[0][1]
 
     let conversationLog = [{ role: 'system', content: playPrompt}]
 
     await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 25})
+    let prevMessages = await message.channel.messages.fetch({ limit: 10})
     prevMessages.reverse()
 
     prevMessages.forEach((msg) => {
@@ -151,7 +174,7 @@ client.on("messageCreate", async (message) => {
         if (msg.author.id == message.author.id){
             conversationLog.push({
                 role: 'user',
-                content: "(ALWAYS REMEMBER YOUR INITIAL PROMPT)\n(CHARACTER: " + journey[0] + ")\n(CHARACTER'S GOAL: " + journey[1] + ")\n(ONLY RESPOND TO THIS ACTION DO NOT DO ANYTHING MORE) " + msg.content,
+                content: playInstructions + msg.content + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`,
             })
         }
     })
@@ -174,7 +197,7 @@ client.on("messageCreate", async (message) => {
                 .setStyle(ButtonStyle.Danger),
 			);
     
-    const filter = i => i.customId === 'condition' || i.customId === 'end';
+    const filter = i => (i.customId === 'condition' || i.customId === 'end') && i.user.id == message.author.id;
 
     const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
 
@@ -183,7 +206,7 @@ client.on("messageCreate", async (message) => {
             try {
                 await i.deferUpdate();
                 await message.channel.sendTyping();
-                await conversationLog.push({role: 'system', content: `What is the status of the journey? (DIRECTLY ANSWER THIS QUESTION: IF COMPLETED SAY "${message.author} THOU HAS BESTED CAUSALITY")`})
+                await conversationLog.push({role: 'system', content: `What is the status of this journey? (DIRECTLY ANSWER THIS QUESTION`})
                 let result = await openai.createChatCompletion({
                     model: 'gpt-3.5-turbo',
                     messages: conversationLog,
@@ -222,9 +245,11 @@ async function deleteJourney(ctx, position){
     await ctx.channel.permissionOverwrites.create(playerIDS[players.indexOf(position)].id, { SendMessages: false });
 
     setTimeout(async () => {
+        try {
             players[players.indexOf(position)][4]();
-            players.splice(players.indexOf(position), 1)
             playerIDS.splice(players.indexOf(position), 1)
+            players.splice(players.indexOf(position), 1)
             ctx.channel.delete()
+        } catch ( e ) {};
     }, 20000)
 }

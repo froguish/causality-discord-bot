@@ -32,6 +32,7 @@ module.exports = {
 		let goal = interaction.options.getString('goal')
 		let setting = interaction.options.getString('setting')
 
+		/*
 		if (playerIDS.includes(interaction.user)) {
 			await interaction.reply({content: "Sorry! Users may only have 1 journey at a time.", ephemeral: true})
 			return	
@@ -48,6 +49,7 @@ module.exports = {
 			queue.push([interaction.user, character, goal, setting])
 			return
 		}
+		*/
 
 		await interaction.reply({ content: `Journey started!`, ephemeral: true});
 		
@@ -79,9 +81,9 @@ async function createJourney(ctx, a, b, c, ping){
 
 	let playerInfo = [a, b, c, channel]
 	var context = [
-		`Generate a random short detailed sentence about a named character described as YOU. Include their appearance and personality.`,
-		`Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
-		`Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
+		`Let's start a new journey! Generate a random short detailed sentence about a named character for this journey described as YOU. Include their appearance and personality.`,
+		`Let's start a new journey! Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
+		`Let's start a new journey! Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
 	]
 
 	for (let i = 0; i < playerInfo.length; i++){
@@ -115,8 +117,8 @@ async function createJourney(ctx, a, b, c, ping){
 
 	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);
 
-	channel.send(result.data.choices[0].message)
 	channel.send(`${ping}`)
+	channel.send(result.data.choices[0].message)
 
 	channel.permissionOverwrites.create(ping.id, { SendMessages: true });
 
@@ -126,7 +128,7 @@ async function createJourney(ctx, a, b, c, ping){
 			playerIDS.shift()
 			await channel.delete()
 		} catch (e) {}
-	}, 120000)
+	}, 300000)
 
 	function cancel(){
 		clearTimeout(timer);

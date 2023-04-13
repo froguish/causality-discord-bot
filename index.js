@@ -237,6 +237,6 @@ async function deleteJourney(ctx, position){
             players.splice(players.indexOf(position), 1)
             ctx.channel.delete()
         } catch ( e ) {};
-    }, 20000)
+    }, 120000)
 
 }

@@ -161,78 +161,63 @@ client.on("messageCreate", async (message) => {
 
     await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 10})
+    let prevMessages = await message.channel.messages.fetch({ limit: 20})
     prevMessages.reverse()
 
-    prevMessages.forEach((msg) => {
-        if (msg.author.id == client.user.id){
-            conversationLog.push({
-                role: 'assistant',
-                content: msg.content,
-            })
-        }
-        if (msg.author.id == message.author.id){
-            conversationLog.push({
-                role: 'user',
-                content: playInstructions + msg.content + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`,
-            })
-        }
-    })
-
-    let result = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: conversationLog,
-        max_tokens: 400,
-    })
-
-    const row = new ActionRowBuilder()
-			.addComponents(
-				new ButtonBuilder()
-					.setCustomId('condition')
-					.setLabel('Check status')
-					.setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                .setCustomId('end')
-                .setLabel('End')
-                .setStyle(ButtonStyle.Danger),
-			);
     
-    const filter = i => (i.customId === 'condition' || i.customId === 'end') && i.user.id == message.author.id;
 
-    const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
-
-    collector.on('collect', async i => {
-        if (i.customId === 'condition'){
-            try {
-                await i.deferUpdate();
-                await message.channel.sendTyping();
-                await conversationLog.push({role: 'system', content: `What is the status of this journey? (DIRECTLY ANSWER THIS QUESTION`})
-                let result = await openai.createChatCompletion({
-                    model: 'gpt-3.5-turbo',
-                    messages: conversationLog,
-                    max_tokens: 400,
+    try {
+        prevMessages.forEach((msg) => {
+            if (msg.author.id == client.user.id){
+                conversationLog.push({
+                    role: 'assistant',
+                    content: msg.content,
                 })
-    
-               await message.channel.send(result.data.choices[0].message.content)
-            } catch (e) { };
-        }
-        if (i.customId === 'end'){
-            try {
-                await i.deferUpdate();
-                await i.editReply({ components: []})
-                await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY**`)
-            } catch ( e ) { };
-        }
-    });
+            }
+            if (msg.author.id == message.author.id){
+                conversationLog.push({
+                    role: 'user',
+                    content: playInstructions + msg.content + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`,
+                })
+            }
+        })
 
-    message.channel.send({content: result.data.choices[0].message.content, components: [row]})
-    
+        let result = await openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: conversationLog,
+            max_tokens: 400,
+        })
+
+        const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                    .setCustomId('end')
+                    .setLabel('End')
+                    .setStyle(ButtonStyle.Danger),
+                );
+        
+        const filter = i => i.customId === 'end' && i.user.id == message.author.id;
+
+        const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
+
+        collector.on('collect', async i => {
+            if (i.customId === 'end'){
+                try {
+                    await i.deferUpdate();
+                    await i.editReply({ components: []})
+                    await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY**`)
+                } catch ( e ) { };
+            }
+        });
+
+        message.channel.send({content: result.data.choices[0].message.content, components: [row]})
+
+    } catch ( e ) {}
 });
 
 client.on(Events.InteractionCreate, interaction => {
 	if (!interaction.isButton()) return;
-	
-});
+}); 
 
 client.on("channelDelete", async (chnnl) => {
     if (chnnl.parent.id != "1094756148315443270") return
@@ -252,4 +237,5 @@ async function deleteJourney(ctx, position){
             ctx.channel.delete()
         } catch ( e ) {};
     }, 20000)
+
 }

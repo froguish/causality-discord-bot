@@ -120,12 +120,13 @@ client.on("messageCreate", async (message) => {
 ]
 
     if (message.content.toUpperCase().includes("CAUSALITY HAS ENDED YOUR JOURNEY") && message.author.bot) {
-        console.log("Journey has ended.")
         deleteJourney(message, journey);
         return
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
-        console.log("Journey has been completed.")
+        if (message.guild.roles.cache.get("1096150409065795646").members.size < 20){
+            message.member.roles.add(message.guild.roles.cache.get("1096150409065795646"))
+        }
         deleteJourney(message, journey);
         return
     }

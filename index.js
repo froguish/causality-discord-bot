@@ -142,6 +142,7 @@ client.on("messageCreate", async (message) => {
 
         let timer = setTimeout(async () => {
             try {
+                await message.channel.send(`${message.author} Unfortunately your time with Causality has ended, and you have run out of time. Better luck next time.`)
                 deleteJourney(message, journey);
             } catch (e) {}
         }, 900000)
@@ -162,7 +163,7 @@ client.on("messageCreate", async (message) => {
 
     await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 20})
+    let prevMessages = await message.channel.messages.fetch({ limit: 10})
     prevMessages.reverse()
 
     
@@ -211,7 +212,7 @@ client.on("messageCreate", async (message) => {
             }
         });
 
-        message.channel.send({content: result.data.choices[0].message.content, components: [row]})
+        await message.channel.send({content: result.data.choices[0].message.content, components: [row]})
 
     } catch ( e ) {}
 });

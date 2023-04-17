@@ -46,14 +46,14 @@ module.exports = {
 				}
 			}
 			interaction.reply({content: "Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.", ephemeral: true})
-			queue.push([interaction.user, character, goal, setting])
+			queue.push([interaction.member, character, goal, setting])
 			return
 		}
 		
 
 		await interaction.reply({ content: `Journey started!`, ephemeral: true});
 		
-		await createJourney(interaction, character, goal, setting, interaction.user);
+		await createJourney(interaction, character, goal, setting, interaction.member);
 
 	},
 	queue,
@@ -115,7 +115,7 @@ async function createJourney(ctx, a, b, c, ping){
 		max_tokens: 400,
 	})
 
-	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3]]);
+	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]);
 
 	channel.send(`${ping}`)
 	channel.send(result.data.choices[0].message)

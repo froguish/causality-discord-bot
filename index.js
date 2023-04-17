@@ -85,12 +85,12 @@ var queue = myModule.queue
 var players = myModule.players
 var playerIDS = myModule.playerIDS
 
-
 client.on("messageCreate", async (message) => {
     if (message.channel.parent.id != "1094756148315443270") return
     if (message.author.bot && (message.channel.messages.fetch({ limit: 1}) == null )) return
+    if (message.content.length > 1000 && !message.author.bot) {await message.channel.send("Sorry! Character limit reached. Please send a message shorter than 1000 characters."); return}
 
-    let journey = ["", "", "", ""]
+    let journey = ["", "", "", "", ""]
 
     for (let journeys of players){
         if (journeys[3] == message.channel.id)
@@ -125,16 +125,20 @@ client.on("messageCreate", async (message) => {
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
         if (message.guild.roles.cache.get("1096150409065795646").members.size < 20){
-            message.member.roles.add(message.guild.roles.cache.get("1096150409065795646"))
+            journey[5].roles.add(message.guild.roles.cache.get("1096150409065795646"))
         }
         deleteJourney(message, journey);
         return
     }
 
+    if (message.content != `${journey[5]}` && message.content != "Sorry! Character limit reached. Please send a message shorter than 1000 characters.") {
+        journey[4].unshift(message)
+    }
+
     if (message.author.bot) return
 
-    if (players[players.indexOf(journey)][5]){
-        players[players.indexOf(journey)][4]();
+    if (players[players.indexOf(journey)][journey.length - 1]){
+        players[players.indexOf(journey)][journey.length - 2]();
 
         
         players[players.indexOf(journey)].pop()
@@ -159,24 +163,20 @@ client.on("messageCreate", async (message) => {
 
     let playInstructions = prompts[0][1]
 
-    let conversationLog = [{ role: 'system', content: playPrompt}]
+    let conversationLog = [{ role: 'system', content: playPrompt }]
 
     await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 10  })
-    prevMessages.reverse()
-
-    
-
     try {
+        let prevMessages = (await journey[4].slice(0, 15)).reverse()
+
         prevMessages.forEach((msg) => {
             if (msg.author.id == client.user.id){
                 conversationLog.push({
                     role: 'assistant',
                     content: msg.content,
                 })
-            }
-            if (msg.author.id == message.author.id){
+            } else {
                 conversationLog.push({
                     role: 'user',
                     content: playInstructions + msg.content + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`,
@@ -187,7 +187,6 @@ client.on("messageCreate", async (message) => {
         let result = await openai.createChatCompletion({
             model: 'gpt-3.5-turbo',
             messages: conversationLog,
-            max_tokens: 400,
         })
 
         const row = new ActionRowBuilder()
@@ -207,7 +206,7 @@ client.on("messageCreate", async (message) => {
                 try {
                     await i.deferUpdate();
                     await i.editReply({ components: []})
-                    await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY**`)
+                    await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY.**`)
                 } catch ( e ) { };
             }
         });
@@ -233,7 +232,7 @@ async function deleteJourney(ctx, position){
 
     setTimeout(async () => {
         try {
-            players[players.indexOf(position)][4]();
+            players[players.indexOf(position)][position.length - 2]();
             playerIDS.splice(players.indexOf(position), 1)
             players.splice(players.indexOf(position), 1)
             ctx.channel.delete()

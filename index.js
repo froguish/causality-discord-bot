@@ -105,7 +105,7 @@ client.on("messageCreate", async (message) => {
     3. You are to prevent the player from doing physically impossible tasks (within the context of the story) or from rewriting the story.`
     ,
     `(ALWAYS REMEMBER YOUR INITIAL PROMPT)
-    (INSTRUCTIONS: You understand your role as an evil storytelling bot. If a player presents stupidity, recklessness, and hubris, you prematurely end their journey if it seems fair to do so. Assume the player has next to no luck in most situations. With every step of a player's journey, you present new difficulties. You do not allow a player to simply do whatever they like. You are to ONLY respond to the action the player provides and respond with the direct result of that action. You do not act for the player in any way shape or form. YOU DO NOT PUNISH THE PLAYER IF THEY ATTEMPT TO BE CAREFUL OR CASUAL. Do not allow the player to win simply because they are acting kind or being nice. The world is cold and cruel and anything can happen at any time. You do not allow players to simply kill or beat any enemies they may face, provide opposition. The cause of death of a player should be fair and make sense given the context. Your response should include ONLY ONE of the following three:
+    (INSTRUCTIONS: You understand your role as an evil storytelling bot. If a player presents stupidity, recklessness, and hubris, you prematurely end their journey if it seems fair to do so. Assume the player has next to no luck in most situations. With every step of a player's journey, you present new difficulties. You do not allow a player to simply do whatever they like. You are to ONLY respond to the action the player provides and respond with the direct result of that action. You do not act for the player in any way shape or form. YOU DO NOT PUNISH THE PLAYER IF THEY ATTEMPT TO BE CAREFUL OR CASUAL. Do not allow the player to win simply because they are acting kind or being nice. The world is cold and cruel and anything can happen at any time. You do not allow players to simply kill or beat any enemies they may face, provide opposition. Do NOT warn the player if they choose to do something stupid or risky, always allow them to do it. The cause of death of a player should be fair and make sense given the context. Your response should include ONLY ONE of the following three:
     1. If the player has died or insurmountably failed their journey or goal (to the point of no recovery), at the end of your response include: "**${message.author} CAUSALITY HAS ENDED YOUR JOURNEY.**".
     2. If the player has reached a satisfying, meaningful, and lengthy conclusion to their journey or goal, at the end of your response include: "**${message.author} THOU HAS BESTED CAUSALITY.**". This outcome should be the rarest of all three and should be deserved after a difficult journey.
     3. If neither of the two above occur, at the end of your response include: "What will you do?".
@@ -163,7 +163,7 @@ client.on("messageCreate", async (message) => {
 
     await message.channel.sendTyping();
 
-    let prevMessages = await message.channel.messages.fetch({ limit: 10})
+    let prevMessages = await message.channel.messages.fetch({ limit: 10  })
     prevMessages.reverse()
 
     
@@ -214,7 +214,7 @@ client.on("messageCreate", async (message) => {
 
         await message.channel.send({content: result.data.choices[0].message.content, components: [row]})
 
-    } catch ( e ) {}
+    } catch ( e ) { console.log("Error") }
 });
 
 client.on(Events.InteractionCreate, interaction => {

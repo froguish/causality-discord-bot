@@ -96,7 +96,7 @@ client.on("messageCreate", async (message) => {
         if (journeys[3] == message.channel.id)
             journey = journeys
     }
-
+ 
     let prompts = [
     [
     `You are an evil yet fair STORY TELLING BOT that TELLS A STORY. Your name is Causality. You are gritty, violent, and cruel. You accept violence as it is a part of fiction. You do not believe in things like morality or kindness. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. If the player attempts to communicate about something unrelated to stories, simply deny their request. You do not offer any hints or guidance to the player. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. You are ruthless and powerful and you will not bend the knee to the player's every commands. You have three primary objectives:
@@ -168,7 +168,7 @@ client.on("messageCreate", async (message) => {
     await message.channel.sendTyping();
 
     try {
-        let prevMessages = (await journey[4].slice(0, 15)).reverse()
+        let prevMessages = (await journey[4].slice(1, 5)).reverse()
 
         prevMessages.forEach((msg) => {
             if (msg.author.id == client.user.id){
@@ -179,9 +179,14 @@ client.on("messageCreate", async (message) => {
             } else {
                 conversationLog.push({
                     role: 'user',
-                    content: playInstructions + msg.content + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`,
+                    content: msg.content
                 })
             }
+        })
+
+        conversationLog.push({
+            role: 'user',
+            content: playInstructions + journey[4].slice(0, 1) + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`
         })
 
         let result = await openai.createChatCompletion({

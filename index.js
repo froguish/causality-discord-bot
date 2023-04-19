@@ -126,6 +126,7 @@ client.on("messageCreate", async (message) => {
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
         if (message.guild.roles.cache.get("1096150409065795646").members.size < 20){
             journey[5].roles.add(message.guild.roles.cache.get("1096150409065795646"))
+            await message.channel.send(`Congratulations! You have been awarded the "Winner" role due to being one of the first 20 people who have bested Causality!`)
         }
         deleteJourney(message, journey);
         return

@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { Client, Collection, Events, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require("discord.js");
 const { Configuration, OpenAIApi } = require("openai")
 require('dotenv/config')
 
@@ -201,13 +201,42 @@ client.on("messageCreate", async (message) => {
                     .setCustomId('end')
                     .setLabel('End')
                     .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                    .setCustomId('report')
+                    .setLabel('Report')
+                    .setStyle(ButtonStyle.Danger),
                 );
+        const rowUpdated = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+            .setCustomId('end')
+            .setLabel('End')
+            .setStyle(ButtonStyle.Danger),
+        );
         
-        const filter = i => i.customId === 'end' && i.user.id == message.author.id;
+        const filter = i => (i.customId === 'end' && i.user.id == message.author.id) || i.customId === 'report';
 
         const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
 
         collector.on('collect', async i => {
+            if (i.customId === 'report'){
+                try{
+                    await i.deferUpdate();
+                    let prevMessages = (await journey[4].slice(0, 5)).reverse()
+                    let log = ""
+                    prevMessages.forEach((msg) => {
+                        if (msg.author.id == client.user.id){
+                            log += `BOT: ${msg.content}\n`
+                        } else {
+                            log += `PLAYER: ${msg.content}\n`
+                        }
+                    })
+                    let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
+                    await message.guild.channels.cache.get("1098657482064269373").send({files: [atc]});
+                    await i.editReply({ components: [rowUpdated]})
+                    await i.user.send("Report sent!")
+                } catch ( e ) { };
+            }
             if (i.customId === 'end'){
                 try {
                     await i.deferUpdate();

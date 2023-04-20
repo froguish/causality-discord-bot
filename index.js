@@ -222,7 +222,7 @@ client.on("messageCreate", async (message) => {
             if (i.customId === 'report'){
                 try{
                     await i.deferUpdate();
-                    let prevMessages = (await journey[4].slice(0, 5)).reverse()
+                    let prevMessages = (await journey[4].reverse())
                     let log = ""
                     prevMessages.forEach((msg) => {
                         if (msg.author.id == client.user.id){
@@ -232,7 +232,7 @@ client.on("messageCreate", async (message) => {
                         }
                     })
                     let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
-                    await message.guild.channels.cache.get("1098657482064269373").send({files: [atc]});
+                    await message.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${journey[5]}\nReported by: ${i.user}\n@everyone`, files: [atc]});
                     await i.editReply({ components: [rowUpdated]})
                     await i.user.send("Report sent!")
                 } catch ( e ) { };

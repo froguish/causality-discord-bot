@@ -27,33 +27,34 @@ module.exports = {
 			.setDescription('The description of the starting setting'))
 		,
 	async execute(interaction) {
-		var categorySize = await interaction.guild.channels.cache.get("1094756148315443270").children.cache.size
-		let character = interaction.options.getString('character')
-		let goal = interaction.options.getString('goal')
-		let setting = interaction.options.getString('setting')
-
-		
-		if (playerIDS.includes(interaction.user)) {
-			await interaction.reply({content: "Sorry! Users may only have 1 journey at a time.", ephemeral: true})
-			return	
-		}
-
-		if (categorySize > 5) {
-			for (let pos of queue) {
-				if (pos[0] == interaction.user){
-					await interaction.reply({content: "Sorry! Users may only have 1 journey in the queue at a time.", ephemeral: true})
-					return
-				}
+		try{
+			var categorySize = await interaction.guild.channels.cache.get("1094756148315443270").children.cache.size
+			let character = interaction.options.getString('character')
+			let goal = interaction.options.getString('goal')
+			let setting = interaction.options.getString('setting')
+			
+			if (playerIDS.includes(interaction.member)) {
+				await interaction.reply({content: "Sorry! Users may only have 1 journey at a time.", ephemeral: true})
+				return	
 			}
-			interaction.reply({content: "Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.", ephemeral: true})
-			queue.push([interaction.member, character, goal, setting])
-			return
-		}
-		
 
-		await interaction.reply({ content: `Journey started!`, ephemeral: true});
-		
-		await createJourney(interaction, character, goal, setting, interaction.member);
+			if (categorySize > 5) {
+				for (let pos of queue) {
+					if (pos[0] == interaction.member){
+						await interaction.reply({content: "Sorry! Users may only have 1 journey in the queue at a time.", ephemeral: true})
+						return
+					}
+				}
+				interaction.reply({content: "Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.", ephemeral: true})
+				queue.push([interaction.member, character, goal, setting])
+				return
+			}
+			
+
+			await interaction.reply({ content: `Journey started!`, ephemeral: true});
+			
+			await createJourney(interaction, character, goal, setting, interaction.member);
+		} catch ( e ) { };
 
 	},
 	queue,
@@ -112,7 +113,6 @@ async function createJourney(ctx, a, b, c, ping){
 	const result = await openai.createChatCompletion({
 		model: 'gpt-3.5-turbo',
 		messages: conversationLog,
-		max_tokens: 400,
 	})
 
 	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]);

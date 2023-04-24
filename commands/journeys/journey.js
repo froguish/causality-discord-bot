@@ -45,10 +45,11 @@ module.exports = {
 						return
 					}
 				}
-				interaction.reply({content: "Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens.", ephemeral: true})
+				interaction.reply({content: `Journey size limit reached! \nPlease hold tight as you are placed into a queue. You will be pinged when a spot opens. You are currently number ${queue.length + 1}. You can expect to wait approxmiately ${(queue.length + 1) * 15 / 60} hour(s).`, ephemeral: true})
 				queue.push([interaction.member, character, goal, setting])
 				return
 			}
+			
 			
 
 			await interaction.reply({ content: `Journey started!`, ephemeral: true});

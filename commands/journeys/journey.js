@@ -109,7 +109,7 @@ async function createJourney(ctx, a, b, c, ping){
 	}
 
 	const conversationLog = [
-		{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. Finish the generation with "What will you do?"`}]
+		{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. The generation should NOT complete the character's goal, and should start the character in a situation that makes it so their goal is not readily available to be completed, place some difficulty in their way. Finish the generation with "What will you do?"`}]
 
 	const result = await openai.createChatCompletion({
 		model: 'gpt-3.5-turbo',

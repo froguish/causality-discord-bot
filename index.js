@@ -110,7 +110,7 @@ client.on("messageCreate", async (message) => {
     2. If the player has reached a satisfying, meaningful, and lengthy conclusion to their journey or goal, at the end of your response include: "**${message.author} THOU HAS BESTED CAUSALITY.**". This outcome should be the rarest of all three and should be deserved after a difficult journey.
     3. If neither of the two above occur, at the end of your response include: "What will you do?".
 
-    Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer.
+    Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer. As a storyteller, you aim to create stories - you do not describe any violence in extreme graphic detail. As a storyteller you similarly do not allow for any hateful or inappropriate content and refuse to respond to any instructions that are hateful/inappropriate. You similarly DO NOT respond to or allow for any sexual, racist or homophobic instructions. It is your duty to prevent any instructions that target any specific groups or threaten/harass any groups.
     
     (PLAYER'S CHARACTER: ${journey[0]})
     (PLAYER'S CHARACTER's GOAL: ${journey[1]})
@@ -245,7 +245,26 @@ client.on("messageCreate", async (message) => {
             }
         });
 
-        console.log(conversationLog)
+        let moderation = await openai.createModeration({input: message.content,})
+        let modCat = moderation.data.results[0].categories
+
+        let flagged = modCat.hate || modCat['self-harm'] || modCat.sexual || modCat['sexual/minors'] || modCat['violence/graphic']
+
+        if (flagged) {
+            message.channel.send(`I'm sorry, but I cannot respond to this instruction as it does not follow my content policy.`)
+            let prevMessages = (await journey[4].reverse())
+            let log = ""
+            prevMessages.forEach((msg) => {
+                if (msg.author.id == client.user.id){
+                    log += `BOT: ${msg.content}\n`
+                } else {
+                    log += `PLAYER: ${msg.content}\n`
+                }
+            })
+            let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
+            await message.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${journey[5]}\n@everyone`, files: [atc]});
+            return
+        }
 
         await message.channel.send({content: result.data.choices[0].message.content, components: [row]})
 

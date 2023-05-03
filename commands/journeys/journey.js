@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { Configuration, OpenAIApi } = require("openai")
 require('dotenv/config')
 
@@ -109,12 +109,27 @@ async function createJourney(ctx, a, b, c, ping){
 	}
 
 	const conversationLog = [
-		{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. The generation should NOT complete the character's goal, and should start the character in a situation that makes it so their goal is not readily available to be completed, place some difficulty in their way. Finish the generation with "What will you do?"`}]
+		{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. The generation should NOT complete the character's goal, and should start the character in a situation that makes it so their goal is not readily available to be completed, place some difficulty in their way. Create a generation that does not promote any hateful/inappropriate behaviour. The scenario should always be positive. Finish the generation with "What will you do?".`}]
 
 	const result = await openai.createChatCompletion({
 		model: 'gpt-3.5-turbo',
 		messages: conversationLog,
 	})
+
+	let response = result.data.choices[0].message.content
+	let details = `${playerInfo[0]}, ${playerInfo[1]}, ${playerInfo[2]}`
+
+	let moderation1 = await openai.createModeration({input: details,})
+	let moderation2 = await openai.createModeration({input: response,})
+
+
+	if (moderation1.data.results[0].flagged || moderation2.data.results[0].flagged) {
+		let log = `Options: ${details}\nResponse: ${response}`
+		let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
+		await ctx.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
+		await channel.delete()
+		return
+	}
 
 	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]);
 

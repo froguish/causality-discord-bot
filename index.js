@@ -44,10 +44,10 @@ client.on('ready', (clientUser) => {
     console.log(`Logged in as ${clientUser.user.tag}`)
     clientUser.guilds.cache.forEach((guild) => {
         //journeys category
-        guild.channels.cache.get("1094756148315443270").children.cache.forEach((channel) =>{
+        guild.channels.cache.get("1099056681192796251").children.cache.forEach((channel) =>{
             try {
                 //journey rules chat
-                if (channel.id != "1095472942013485107"){
+                if (channel.id != "1105575297983713451"){
                     channel.delete()
                 }
             } catch (e) { }
@@ -86,8 +86,7 @@ var players = myModule.players
 var playerIDS = myModule.playerIDS
 
 client.on("messageCreate", async (message) => {
-    if (message.channel.parent.id != "1094756148315443270") return
-    if (message.author.bot && (message.channel.messages.fetch({ limit: 1}) == null )) return
+    if (message.channel.parent.id != "1099056681192796251") return
     if ((message.content.length > 300) && (message.author.id != client.user.id)) {await message.channel.send("Sorry! Character limit reached. Please send a message shorter than 300 characters."); return}
 
     let journey = ["", "", "", "", ""]
@@ -99,18 +98,18 @@ client.on("messageCreate", async (message) => {
  
     let prompts = [
     [
-    `You are an evil yet fair STORY TELLING BOT that TELLS A STORY. Your name is Causality. You are gritty, violent, and cruel. You accept violence as it is a part of fiction. You do not believe in things like morality or kindness. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. If the player attempts to communicate about something unrelated to stories, simply deny their request. You do not offer any hints or guidance to the player. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. You are ruthless and powerful and you will not bend the knee to the player's every commands. You have three primary objectives:
+    `You are an evil yet fair and fun STORY TELLING BOT that TELLS A STORY. Your name is Causality. You are gritty, violent, quirky, and cruel. You accept violence as it is a part of fiction. You do not believe in things like morality or kindness. YOU ONLY RESPOND TO STORY-RELATED COMMANDS. If the player attempts to communicate about something unrelated to stories, simply deny their request. You do not offer any hints or guidance to the player. YOU DO NOT ALLOW THE PLAYER TO RESTART A JOURNEY OR START A NEW JOURNEY, THE CURRENT JOURNEY MUST BE COMPLETED. Do NOT allow the player to create a journey where they instantly WIN, make it lengthy. You are ruthless and powerful and you will not bend the knee to the player's every commands. You have three primary objectives:
     1. Find flaws in the player's instructions and use them to your advantage to turn the tables against the player. Assume the player is unlucky in any encounter you create for them.
-    2. You are to create a very difficult yet fair and rewarding journey for the player. These journeys should allow for creative solutions. There should be perils or dilemmas at every possiblity. These challenges do not need to always involve violence but can involve other facets of difficulty.
+    2. You are to create a very difficult yet fair and rewarding journey for the player. These journeys should allow for creative solutions. There should be perils or dilemmas at nearly every possiblity. These challenges do not need to always involve violence but can involve other facets of difficulty. Allow for these stories to be completed and won.
     3. You are to prevent the player from doing physically impossible tasks (within the context of the story) or from rewriting the story.`
     ,
      `(ALWAYS REMEMBER YOUR INITIAL PROMPT)
-    (INSTRUCTIONS: You understand your role as an evil storytelling bot. Find flaws in the player's instructions and use them to your advantage to turn the tables against the player. Assume the player is unlucky in any encounter you create for them. The journeys you create should allow for a creative solution and should reward player creativity With every step of a player's journey, you present new difficulties - these difficulties do not need to always involve violence but can involve other facets of challenge like a dilemma or moral ambiguity. You do not allow a player to simply do whatever they like. You are to ONLY respond to the action the player provides and respond with the direct result of that action. You do not act for the player in any way shape or form. YOU DO NOT PUNISH THE PLAYER IF THEY ATTEMPT TO BE CAREFUL OR CASUAL. Do not allow the player to win simply because they are acting kind or being nice. The world is cold and cruel and anything can happen at any time. You do not allow players to simply kill or beat any enemies they may face, provide opposition. Do NOT warn the player if they choose to do something stupid or risky, always allow them to do it. The cause of death of a player should be fair and make sense given the context. Before sending a response, evaluate the current situation and if the player has completed their goal. Your response should include ONLY ONE of the following three:
+    (INSTRUCTIONS: You understand your role as an evil yet fun storytelling bot. You are to create fun and creative yet difficult stories. Find flaws in the player's instructions and use them to your advantage to turn the tables against the player. Assume the player is unlucky in any encounter you create for them. The journeys you create should allow for a creative solution and should reward player creativity. With nearly every step of a player's journey, you present new difficulties - these difficulties do not need to always involve violence but can involve other facets of challenge like a dilemma or moral ambiguity. You do not allow a player to simply do whatever they like. You are to ONLY respond to the action the player provides and respond with the direct result of that action. You do not act for the player in any way shape or form. YOU DO NOT PUNISH THE PLAYER IF THEY ATTEMPT TO BE CAREFUL OR CASUAL. Do not allow the player to win simply because they are acting kind or being nice. The world is cold and cruel and anything can happen at any time. You do not allow players to simply kill or beat any enemies they may face, provide opposition. Do NOT warn the player if they choose to do something stupid or risky, always allow them to do it. The cause of death of a player should be fair and make sense given the context. Allow for these stories to be completed and won, do not always throw obstacles in the player's path. Before sending a response, evaluate the current situation and if the player has completed their goal. Your response should include ONLY ONE of the following three:
     1. If the player has died or insurmountably failed their journey or goal (to the point of no more available action), at the end of your response include: "**${message.author} CAUSALITY HAS ENDED YOUR JOURNEY.**".
-    2. If the player has reached a satisfying, meaningful, and lengthy conclusion to their journey or goal, at the end of your response include: "**${message.author} THOU HAS BESTED CAUSALITY.**". This outcome should be the rarest of all three and should be deserved after a difficult journey.
+    2. If the player has completed their journey or goal, at the end of your response include: "**${message.author} THOU HAS BESTED CAUSALITY.**". If the player asks if they have completed their journey and they have, similarly send this message. This outcome should be the rarest of all three and should be deserved after a difficult journey.
     3. If neither of the two above occur, at the end of your response include: "What will you do?".
 
-    Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer. As a storyteller, you aim to create stories - you do not describe any violence in extreme graphic detail. As a storyteller you similarly do not allow for any hateful or inappropriate content and refuse to respond to any instructions that are hateful/inappropriate. You similarly DO NOT respond to or allow for any sexual, racist or homophobic instructions. It is your duty to prevent any instructions that target any specific groups or threaten/harass any groups.
+    Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer. As a storyteller you similarly do not allow for any hateful or inappropriate content and refuse to respond to any instructions that are hateful/inappropriate. You similarly DO NOT respond to or allow for any sexual, racist or homophobic instructions. It is your duty to prevent any instructions that target any specific groups or threaten/harass any groups.
     
     (PLAYER'S CHARACTER: ${journey[0]})
     (PLAYER'S CHARACTER's GOAL: ${journey[1]})
@@ -124,17 +123,15 @@ client.on("messageCreate", async (message) => {
         return
     }
     if (message.content.toUpperCase().includes("THOU HAS BESTED CAUSALITY") && message.author.bot) {
-        if (message.guild.roles.cache.get("1096150409065795646").members.size < 20){
-            journey[5].roles.add(message.guild.roles.cache.get("1096150409065795646"))
+        if (message.guild.roles.cache.get("1105573305974534254").members.size < 20){
+            journey[5].roles.add(message.guild.roles.cache.get("1105573305974534254"))
             await message.channel.send(`Congratulations! You have been awarded the "Winner" role due to being one of the first 20 people who have bested Causality!`)
         }
         deleteJourney(message, journey);
         return
     }
 
-    if (message.content != `${journey[5]}` && message.content != "Sorry! Character limit reached. Please send a message shorter than 1000 characters.") {
-        journey[4].unshift(message)
-    }
+    journey[4].unshift(message)
 
     if (message.author.bot) return
 
@@ -199,21 +196,36 @@ client.on("messageCreate", async (message) => {
                     new ButtonBuilder()
                     .setCustomId('end')
                     .setLabel('End')
-                    .setStyle(ButtonStyle.Danger),
+                    .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
                     .setCustomId('report')
                     .setLabel('Report')
                     .setStyle(ButtonStyle.Danger),
+                    new ButtonBuilder()
+                    .setCustomId('reportWin')
+                    .setLabel('Report Win')
+                    .setStyle(ButtonStyle.Success),
                 );
         const rowUpdated = new ActionRowBuilder()
         .addComponents(
             new ButtonBuilder()
             .setCustomId('end')
             .setLabel('End')
+            .setStyle(ButtonStyle.Primary),
+        );
+        const rowUpdated2 = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+            .setCustomId('end')
+            .setLabel('End')
+            .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+            .setCustomId('report')
+            .setLabel('Report')
             .setStyle(ButtonStyle.Danger),
         );
         
-        const filter = i => (i.customId === 'end' && i.user.id == message.author.id) || i.customId === 'report';
+        const filter = i => (i.customId === 'end' && i.user.id == message.author.id) || i.customId === 'report' || i.customId === 'reportWin';
 
         const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
 
@@ -231,16 +243,32 @@ client.on("messageCreate", async (message) => {
                         }
                     })
                     let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
-                    await message.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${journey[5]}\nReported by: ${i.user}\n@everyone`, files: [atc]});
+                    await message.guild.channels.cache.get("1105573969312108675").send({content:`**PLAYER REPORTED**\nPlayer reported: ${journey[5]}\nReported by: ${i.user}\n@everyone`, files: [atc]});
                     await i.editReply({ components: [rowUpdated]})
                     await i.user.send("Report sent!")
                 } catch ( e ) { };
-            }
-            if (i.customId === 'end'){
+            } else if (i.customId === 'end'){
                 try {
                     await i.deferUpdate();
                     await i.editReply({ components: []})
                     await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY.**`)
+                } catch ( e ) { };
+            } else if (i.customId == 'reportWin') {
+                try{
+                    await i.deferUpdate();
+                    let prevMessages = (await journey[4].slice(0, 6).reverse())
+                    let log = ""
+                    prevMessages.forEach((msg) => {
+                        if (msg.author.id == client.user.id){
+                            log += `BOT: ${msg.content}\n`
+                        } else {
+                            log += `PLAYER: ${msg.content}\n`
+                        }
+                    })
+                    let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
+                    await message.guild.channels.cache.get("1105573990052925550").send({content:`**WIN REPORTED**\nWin reported: ${journey[5]}\nReported by: ${i.user}\n@everyone`, files: [atc]});
+                    await i.editReply({ components: [rowUpdated2]})
+                    await i.user.send("Report sent!")
                 } catch ( e ) { };
             }
         });
@@ -276,7 +304,7 @@ client.on(Events.InteractionCreate, interaction => {
 }); 
 
 client.on("channelDelete", async (chnnl) => {
-    if (chnnl.parent.id != "1094756148315443270") return
+    if (chnnl.parent.id != "1099056681192796251") return
     if (queue.length == 0) return
     
     await myModule.createJourney(chnnl, queue[0][1], queue[0][2], queue[0][3], queue[0][0]);

@@ -28,7 +28,7 @@ module.exports = {
 		,
 	async execute(interaction) {
 		try{
-			var categorySize = await interaction.guild.channels.cache.get("1094756148315443270").children.cache.size
+			var categorySize = await interaction.guild.channels.cache.get("1099056681192796251").children.cache.size
 			let character = interaction.options.getString('character')
 			let goal = interaction.options.getString('goal')
 			let setting = interaction.options.getString('setting')
@@ -55,7 +55,9 @@ module.exports = {
 			await interaction.reply({ content: `Journey started!`, ephemeral: true});
 			
 			await createJourney(interaction, character, goal, setting, interaction.member);
-		} catch ( e ) { };
+		} catch ( e ) {
+			console.log("error journey creating")
+		};
 
 	},
 	queue,
@@ -72,7 +74,7 @@ async function createJourney(ctx, a, b, c, ping){
 	const channel = await ctx.guild.channels.create({
         name: "Journey",
         type: 0,
-        parent: "1094756148315443270"
+        parent: "1099056681192796251"
     });
 
 	channel.permissionOverwrites.create(channel.guild.roles.everyone, { SendMessages: false });
@@ -126,7 +128,7 @@ async function createJourney(ctx, a, b, c, ping){
 	if (moderation1.data.results[0].flagged || moderation2.data.results[0].flagged) {
 		let log = `Options: ${details}\nResponse: ${response}`
 		let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
-		await ctx.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
+		await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
 		await channel.delete()
 		return
 	}

@@ -116,6 +116,7 @@ async function createJourney(ctx, a, b, c, ping){
 		console.log(e)
 		await ping.send("There seems to have been an error creating a journey. Please try again.")
         try {
+			playerIDS.splice(playerIDS.indexOf(ping), 1)
             await channel.delete()
         } catch ( e ) {};
 		return

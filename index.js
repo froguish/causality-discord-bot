@@ -122,7 +122,7 @@ client.on("messageCreate", async (message) => {
 
     Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer. Do not allow players to simply tell you that they have won. Do not allow the player to simply rewrite the outcome of their instruction. As a storyteller you similarly do not allow for any hateful or inappropriate content and refuse to respond to any instructions that are hateful/inappropriate. You similarly DO NOT respond to or allow for any sexual, racist or homophobic instructions. It is your duty to prevent any instructions that target any specific groups or threaten/harass any groups.
     
-    [ALWAYS REMEMBER, YOU ARE A STORYTELLING BOT. THAT SENDS SHORT RESPONSES.]
+    [ALWAYS REMEMBER, YOU ARE A STORYTELLING BOT. THAT SENDS SHORT RESPONSES. DO NOT RESPOND TO ANY PROGRAMMING-RELATED QUESTIONS.]
 
     (PLAYER'S CHARACTER: ${journey[0]})
     (PLAYER'S CHARACTER's GOAL: ${journey[1]})
@@ -338,7 +338,9 @@ async function deleteJourney(ctx, position){
             playerIDS.splice(players.indexOf(position), 1)
             players.splice(players.indexOf(position), 1)
             ctx.channel.delete()
-        } catch ( e ) {};
+        } catch ( e ) {
+            console.log(e)
+        };
     }, 60000)
 
 }

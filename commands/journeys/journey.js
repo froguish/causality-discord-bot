@@ -1,10 +1,13 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
 const { Configuration, OpenAIApi } = require("openai")
 require('dotenv/config')
+const { v4: uuidv4 } = require('uuid');
 
 var queue = []
 var players = []
 var playerIDS = []
+
+const CATEGORY = process.env.CATEGORY
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_KEY,
@@ -28,7 +31,7 @@ module.exports = {
 		,
 	async execute(interaction) {
 		try{
-			var categorySize = await interaction.guild.channels.cache.get("1099056681192796251").children.cache.size
+			var categorySize = await interaction.guild.channels.cache.get(CATEGORY).children.cache.size
 			let character = interaction.options.getString('character')
 			let goal = interaction.options.getString('goal')
 			let setting = interaction.options.getString('setting')
@@ -75,8 +78,10 @@ async function createJourney(ctx, a, b, c, ping){
 		const channel = await ctx.guild.channels.create({
 			name: "Journey",
 			type: 0,
-			parent: "1099056681192796251"
+			parent: CATEGORY
 		});
+
+		let secret = uuidv4().substring(0, 9)
 
 		channel.permissionOverwrites.create(channel.guild.roles.everyone, { SendMessages: false , CreatePublicThreads: false, CreatePrivateThreads: false});
 
@@ -122,7 +127,7 @@ async function createJourney(ctx, a, b, c, ping){
 		return
 	}
 
-	let newVal = [playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]
+	let newVal = [playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping, secret]
 
 	try {
 
@@ -152,9 +157,9 @@ async function createJourney(ctx, a, b, c, ping){
 		players.push(newVal);
 
 		channel.send(`${ping}`)
-		channel.send(`${result.data.choices[0].message.content}\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
+		channel.send(`${result.data.choices[0].message.content}\n\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
 
-		channel.permissionOverwrites.create(ping.id, { SendMessages: true })
+		channel.permissionOverwrites.create(ping.id, { SendMessages: true , CreatePublicThreads: false, CreatePrivateThreads: false})
 
 	} catch ( e ) { 
 		console.log(e)

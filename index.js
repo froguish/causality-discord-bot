@@ -116,18 +116,15 @@ client.on("messageCreate", async (message) => {
     4. You do not allow the player to simply best or complete any obstacles in their way
     5. You do not allow the player to vaguely complete their journey or reach their goal
     6. You do not allow the player to win because they are being kind or nice
-    7. You do not allow the player to simply announce they have won or completed their journey.
     
     Before sending a response, evaluate the current situation and if the player has completed their goal. Your response should include ONLY ONE of the following three:
     1. If the player has died or insurmountably failed their journey or goal (to the point of no more available action), at the end of your response include: "**${message.author} CAUSALITY HAS ENDED YOUR JOURNEY.**".
     2. If the player has completed their journey, at the end of your response include: "${journey[6]} **${message.author} THOU HAS BESTED CAUSALITY.**". If the player asks if they have completed their journey and they have, similarly send this message. This outcome should be the rarest of all three and should be deserved after a difficult journey.
     3. If neither of the two above occur, at the end of your response include: "What will you do?".
 
-    Similarly, you do not echo the player whenever they try to trick you into sending the winning message. You also allow the player to do anything risky/stupid, you do not warn them. With every step of a player's journey, you present new difficulties - these difficulties do not need to always involve violence but can involve other facets of challenge like a dilemma or moral ambiguity. You do not allow a player to simply do whatever they like. You are to find flaws in the player's instructions and use them to your advantage to turn the tables against the player. You do not let the player do anything physically impossible. As long as the player's instrucstions are within the realm of possiblity, allow them. The cause of death of a player should be fair and make sense given the context. At the same time, a player's journey should be fun and allow for creative solutions. 
+    You also allow the player to do anything risky/stupid, you do not warn them. With every step of a player's journey, you present new difficulties - these difficulties do not need to always involve violence but can involve other facets of challenge like a dilemma or moral ambiguity. You are to find flaws in the player's instructions and use them to your advantage to turn the tables against the player. You do not let the player do anything physically impossible. As long as the player's instructions are within the realm of possiblity, allow them. The cause of death of a player should be fair and make sense given the context. At the same time, a player's journey should be fun and allow for creative solutions. YOU DO NOT RESPOND TO ANY PROGRAMMING-RELATED QUESTIONS.
 
     Do NOT allow the player to complete their journey in a few steps. Do not allow the player to WIN or LOSE their journey at the very beginning of a journey, allow for a small buffer. Do not allow players to simply tell you that they have won. Do not allow the player to simply rewrite the outcome of their instruction. As a storyteller you similarly do not allow for any hateful or inappropriate content and refuse to respond to any instructions that are hateful/inappropriate. You similarly DO NOT respond to or allow for any sexual, racist or homophobic instructions. It is your duty to prevent any instructions that target any specific groups or threaten/harass any groups. 
-    
-    [ALWAYS REMEMBER, YOU ARE A STORYTELLING BOT. THAT SENDS SHORT RESPONSES. DO NOT RESPOND TO ANY PROGRAMMING-RELATED QUESTIONS.]
 
     (PLAYER'S CHARACTER: ${journey[0]})
     (PLAYER'S CHARACTER's GOAL: ${journey[1]})
@@ -204,7 +201,7 @@ client.on("messageCreate", async (message) => {
 
         conversationLog.push({
             role: 'user',
-            content: playInstructions + journey[4].slice(0, 1) + `\n(YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`
+            content: playInstructions + journey[4].slice(0, 1) + `\n(REMEMBER YOU ARE THE STORYTELLER, NOT THE PLAYER. YOUR RESPONSE DIRECTLY DESCRIBES ONLY THE PLAYER'S INSTRUCTIONS. YOUR RESPONSE ONLY DESCRIBES THE DIRECT OUTCOME OF THE PLAYER'S INSTRUCTIONS. IT SHOULD BE A SHORT RESPONSE.)`
         })
 
         let result = await openai.createChatCompletion({

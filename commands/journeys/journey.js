@@ -76,7 +76,7 @@ async function createJourney(ctx, a, b, c, ping){
 		}
 
 		const channel = await ctx.guild.channels.create({
-			name: "Journey",
+			name: `${ping.user.username}-journey`,
 			type: 0,
 			parent: CATEGORY
 		});

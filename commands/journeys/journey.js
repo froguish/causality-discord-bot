@@ -56,7 +56,7 @@ module.exports = {
 			
 			await createJourney(interaction, character, goal, setting, interaction.member);
 		} catch ( e ) {
-			console.log("error journey creating")
+			console.log(e)
 		};
 
 	},
@@ -67,78 +67,104 @@ module.exports = {
 };
 
 async function createJourney(ctx, a, b, c, ping){
-	if (queue != 0){
-		queue.shift()
-	}
-
-	const channel = await ctx.guild.channels.create({
-        name: "Journey",
-        type: 0,
-        parent: "1099056681192796251"
-    });
-
-	channel.permissionOverwrites.create(channel.guild.roles.everyone, { SendMessages: false });
-
-	playerIDS.push(ping)
 	
-	channel.sendTyping()
-
-	let playerInfo = [a, b, c, channel]
-	var context = [
-		`Let's start a new journey! Generate a random short detailed sentence about a named character for this journey described as YOU. Include their appearance and personality.`,
-		`Let's start a new journey! Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
-		`Let's start a new journey! Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
-	]
-
-	for (let i = 0; i < playerInfo.length; i++){
-		if (playerInfo[i] == null){
-			let missing = [{role: 'system', content: context[i]}]
-
-			let result = await openai.createChatCompletion({
-				model: 'gpt-3.5-turbo',
-				messages: missing,
-				max_tokens: 200,
-			})
-
-			playerInfo[i] = result.data.choices[0].message.content
-
-			context = [
-				`Generate a random short descriptive sentence about a named character described as YOU.`,
-				`Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
-				`Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
-			]
+		if (queue != 0){
+			queue.shift()
 		}
-	}
 
-	const conversationLog = [
-		{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. The generation should NOT complete the character's goal, and should start the character in a situation that makes it so their goal is not readily available to be completed, place some difficulty in their way. Create a generation that does not promote any hateful/inappropriate behaviour. The scenario should always be positive. Finish the generation with "What will you do?".`}]
+		const channel = await ctx.guild.channels.create({
+			name: "Journey",
+			type: 0,
+			parent: "1099056681192796251"
+		});
 
-	const result = await openai.createChatCompletion({
-		model: 'gpt-3.5-turbo',
-		messages: conversationLog,
-	})
+		channel.permissionOverwrites.create(channel.guild.roles.everyone, { SendMessages: false , CreatePublicThreads: false, CreatePrivateThreads: false});
 
-	let response = result.data.choices[0].message.content
-	let details = `${playerInfo[0]}, ${playerInfo[1]}, ${playerInfo[2]}`
+		playerIDS.push(ping)
+		
+		channel.sendTyping()
 
-	let moderation1 = await openai.createModeration({input: details,})
-	let moderation2 = await openai.createModeration({input: response,})
+		let playerInfo = [a, b, c, channel]
+		var context = [
+			`Let's start a new journey! Generate a random short detailed sentence about a named character for this journey described as YOU. Include their appearance and personality.`,
+			`Let's start a new journey! Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
+			`Let's start a new journey! Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
+		]
 
+	try {
+		for (let i = 0; i < playerInfo.length; i++){
+			if (playerInfo[i] == null){
+				let missing = [{role: 'system', content: context[i]}]
 
-	if (moderation1.data.results[0].flagged || moderation2.data.results[0].flagged) {
-		let log = `Options: ${details}\nResponse: ${response}`
-		let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
-		await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
-		await channel.delete()
+				let result = await openai.createChatCompletion({
+					model: 'gpt-3.5-turbo',
+					messages: missing,
+					max_tokens: 200,
+				})
+
+				playerInfo[i] = result.data.choices[0].message.content
+
+				context = [
+					`Generate a random short descriptive sentence about a named character described as YOU.`,
+					`Given the character info: (${playerInfo[0]}), generate random a detailed short sentence about their goal.`,
+					`Given the character info: (${playerInfo[0]}) and the character's goal (${playerInfo[1]}), generate a random setting for the character.`
+				]
+			}
+		}
+
+	} catch ( e ) {
+		console.log(e)
+		await ping.send("There seems to have been an error creating a journey. Please try again.")
+        try {
+            await channel.delete()
+        } catch ( e ) {};
 		return
 	}
 
-	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]);
+	let newVal = [playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]
 
-	channel.send(`${ping}`)
-	channel.send(`${result.data.choices[0].message.content}\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
+	try {
 
-	channel.permissionOverwrites.create(ping.id, { SendMessages: true });
+		const conversationLog = [
+			{ role: 'system', content: `You are a scenario describing storyteller. You describe gritty and realistic scenarios. The elements provided are the player: (${playerInfo[0]}), the player's goal: (${playerInfo[1]}), and the setting: (${playerInfo[2]}).`}, { role: 'user', content: `Given those elements, you are to generate an introduction of the character, their goal, and their setting. The generation should NOT complete the character's goal, and should start the character in a situation that makes it so their goal is not readily available to be completed, place some difficulty in their way. Create a generation that does not promote any hateful/inappropriate behaviour. The scenario should always be positive. Finish the generation with "What will you do?".`}]
+
+		const result = await openai.createChatCompletion({
+			model: 'gpt-3.5-turbo',
+			messages: conversationLog,
+		})
+
+		let response = result.data.choices[0].message.content
+		let details = `${playerInfo[0]}, ${playerInfo[1]}, ${playerInfo[2]}`
+
+		let moderation1 = await openai.createModeration({input: details,})
+		let moderation2 = await openai.createModeration({input: response,})
+
+
+		if (moderation1.data.results[0].flagged || moderation2.data.results[0].flagged) {
+			let log = `Options: ${details}\nResponse: ${response}`
+			let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
+			await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
+			await channel.delete()
+			return
+		}
+
+		players.push(newVal);
+
+		channel.send(`${ping}`)
+		channel.send(`${result.data.choices[0].message.content}\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
+
+		channel.permissionOverwrites.create(ping.id, { SendMessages: true })
+
+	} catch ( e ) { 
+		console.log(e)
+		await ping.send("There seems to have been an error creating a journey. Please try again.")
+        try {
+            playerIDS.splice(players.indexOf(newVal), 1)
+            players.splice(players.indexOf(newVal), 1)
+            await channel.delete()
+        } catch ( e ) {};
+		return
+	}
 
 	let timer = setTimeout(async () => {
 		try {
@@ -156,5 +182,5 @@ async function createJourney(ctx, a, b, c, ping){
 
 	players[players.length - 1].push(cancel);
 	players[players.length - 1].push(notStarted);
-
+	
 }

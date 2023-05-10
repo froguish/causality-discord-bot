@@ -312,7 +312,10 @@ client.on("messageCreate", async (message) => {
 
         await message.channel.send({content: result.data.choices[0].message.content, components: [row]})
 
-    } catch ( e ) { console.log("Error") }
+    } catch ( e ) { 
+        console.log(e)
+        await message.channel.send(`It seems there has been an error in processing your instruction. Please resend your instruction.`)
+    }
 });
 
 client.on(Events.InteractionCreate, interaction => {
@@ -336,6 +339,6 @@ async function deleteJourney(ctx, position){
             players.splice(players.indexOf(position), 1)
             ctx.channel.delete()
         } catch ( e ) {};
-    }, 120000)
+    }, 60000)
 
 }

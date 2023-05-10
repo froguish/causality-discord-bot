@@ -136,7 +136,7 @@ async function createJourney(ctx, a, b, c, ping){
 	players.push([playerInfo[0], playerInfo[1], playerInfo[2], playerInfo[3], [], ping]);
 
 	channel.send(`${ping}`)
-	channel.send(result.data.choices[0].message)
+	channel.send(`${result.data.choices[0].message.content}\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
 
 	channel.permissionOverwrites.create(ping.id, { SendMessages: true });
 

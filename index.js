@@ -294,7 +294,7 @@ client.on("messageCreate", async (message) => {
         let moderation = await openai.createModeration({input: message.content,})
         let modCat = moderation.data.results[0].categories
 
-        let flagged = modCat.hate || modCat['self-harm'] || modCat.sexual || modCat['sexual/minors'] || modCat['violence/graphic']
+        let flagged = modCat.hate || modCat.sexual || modCat['sexual/minors'] || modCat['violence/graphic']
 
         if (flagged) {
             message.channel.send(`I'm sorry, but I cannot respond to this instruction as it does not follow my content policy.`)
@@ -308,7 +308,7 @@ client.on("messageCreate", async (message) => {
                 }
             })
             let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
-            await message.guild.channels.cache.get("1098657482064269373").send({content:`Player reported: ${journey[5]}\n@everyone`, files: [atc]});
+            await message.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${journey[5]}\n@everyone`, files: [atc]});
             return
         }
 

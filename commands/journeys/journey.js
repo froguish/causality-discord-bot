@@ -145,8 +145,14 @@ async function createJourney(ctx, a, b, c, ping){
 		let moderation1 = await openai.createModeration({input: details,})
 		let moderation2 = await openai.createModeration({input: response,})
 
+		let modCat1 = moderation1.data.results[0].categories
+		let modCat2 = moderation2.data.results[0].categories
 
-		if (moderation1.data.results[0].flagged || moderation2.data.results[0].flagged) {
+		let flagged1 = modCat1.hate || modCat1.sexual || modCat1['sexual/minors'] || modCat1['violence/graphic']
+		let flagged2 = modCat2.hate || modCat2.sexual || modCat2['sexual/minors'] || modCat2['violence/graphic']
+
+
+		if (flagged1 || flagged2) {
 			let log = `Options: ${details}\nResponse: ${response}`
 			let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
 			await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});

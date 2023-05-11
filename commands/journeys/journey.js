@@ -150,6 +150,7 @@ async function createJourney(ctx, a, b, c, ping){
 			let log = `Options: ${details}\nResponse: ${response}`
 			let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
 			await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
+			playerIDS.splice(players.indexOf(newVal), 1)
 			await channel.delete()
 			return
 		}
@@ -157,7 +158,7 @@ async function createJourney(ctx, a, b, c, ping){
 		players.push(newVal);
 
 		channel.send(`${ping}`)
-		channel.send(`${result.data.choices[0].message.content}\n\n**You may have a goal, but in order to win you must complete the everchanging journey at hand.**`)
+		channel.send(`${result.data.choices[0].message.content}\n\n**You may have a goal, but in order to win you must complete the ever-changing journey at hand.**`)
 
 		channel.permissionOverwrites.create(ping.id, { SendMessages: true , CreatePublicThreads: false, CreatePrivateThreads: false})
 

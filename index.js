@@ -294,7 +294,7 @@ client.on("messageCreate", async (message) => {
         let moderation = await openai.createModeration({input: message.content,})
         let modCat = moderation.data.results[0].categories
 
-        let flagged = modCat.hate || modCat.sexual || modCat['sexual/minors'] || modCat['violence/graphic']
+        let flagged = modCat.hate || modCat.sexual || modCat['sexual/minors'] || modCat['violence/graphic'] || modCat['self-harm']
 
         if (flagged) {
             message.channel.send(`I'm sorry, but I cannot respond to this instruction as it does not follow my content policy.`)

@@ -155,7 +155,7 @@ async function createJourney(ctx, a, b, c, ping){
 		if (flagged1 || flagged2) {
 			let log = `Options: ${details}\nResponse: ${response}`
 			let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'})
-			await ping.send("I'm sorry, but I cannot create a journey about that topic. Perhaps try rephrasing it or trying a different topic alltogether!")
+			await ping.send("I'm sorry, but I cannot create a journey about that topic. Perhaps try rephrasing it or trying a different topic altogether!")
 			await ctx.guild.channels.cache.get("1105573969312108675").send({content:`Player reported: ${ping}\n@everyone`, files: [atc]});
 			playerIDS.splice(players.indexOf(newVal), 1)
 			await channel.delete()

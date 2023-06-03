@@ -138,10 +138,6 @@ client.on("messageCreate", async (message) => {
         return
     }
     if (message.content.includes(journey[6]) && message.author.bot) {
-        if (message.guild.roles.cache.get(ROLE).members.size < 20){
-            journey[5].roles.add(message.guild.roles.cache.get(ROLE))
-            await message.channel.send(`Congratulations! You have been awarded the "Winner" role due to being one of the first 20 people who have bested Causality!`)
-        }
         deleteJourney(message, journey);
         return
     }
@@ -219,10 +215,6 @@ client.on("messageCreate", async (message) => {
                     .setCustomId('report')
                     .setLabel('Report')
                     .setStyle(ButtonStyle.Danger),
-                    new ButtonBuilder()
-                    .setCustomId('reportWin')
-                    .setLabel('Report Win')
-                    .setStyle(ButtonStyle.Success),
                 );
         const rowUpdated = new ActionRowBuilder()
         .addComponents(
@@ -231,19 +223,8 @@ client.on("messageCreate", async (message) => {
             .setLabel('End')
             .setStyle(ButtonStyle.Primary),
         );
-        const rowUpdated2 = new ActionRowBuilder()
-        .addComponents(
-            new ButtonBuilder()
-            .setCustomId('end')
-            .setLabel('End')
-            .setStyle(ButtonStyle.Primary),
-            new ButtonBuilder()
-            .setCustomId('report')
-            .setLabel('Report')
-            .setStyle(ButtonStyle.Danger),
-        );
         
-        const filter = i => (i.customId === 'end' && i.user.id == message.author.id) || i.customId === 'report' || i.customId === 'reportWin';
+        const filter = i => (i.customId === 'end' && i.user.id == message.author.id) || i.customId === 'report';
 
         const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 });
 
@@ -270,23 +251,6 @@ client.on("messageCreate", async (message) => {
                     await i.deferUpdate();
                     await i.editReply({ components: []})
                     await message.channel.send(`${message.author} **CAUSALITY HAS ENDED YOUR JOURNEY.**`)
-                } catch ( e ) { };
-            } else if (i.customId == 'reportWin') {
-                try{
-                    await i.deferUpdate();
-                    let prevMessages = (await journey[4].slice(0, 6).reverse())
-                    let log = ""
-                    prevMessages.forEach((msg) => {
-                        if (msg.author.id == client.user.id){
-                            log += `BOT: ${msg.content}\n`
-                        } else {
-                            log += `PLAYER: ${msg.content}\n`
-                        }
-                    })
-                    let atc = new AttachmentBuilder(Buffer.from(log), { name: 'report.txt'});
-                    await message.guild.channels.cache.get("1105573990052925550").send({content:`**WIN REPORTED**\nWin reported: ${journey[5]}\nReported by: ${i.user}\n@everyone`, files: [atc]});
-                    await i.editReply({ components: [rowUpdated2]})
-                    await i.user.send("Report sent!")
                 } catch ( e ) { };
             }
         });
